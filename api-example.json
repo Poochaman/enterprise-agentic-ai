@@ -1,0 +1,63 @@
+{
+  "request": {
+    "method": "POST",
+    "endpoint": "/v1/chat",
+    "headers": {
+      "Content-Type": "application/json",
+      "x-api-key": "your_api_key_here"
+    },
+    "body": {
+      "agentId": "sales-agent-uk",
+      "sessionMode": "stateless",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are an enterprise AI sales agent. Qualify leads, answer product questions, and suggest next actions."
+        },
+        {
+          "role": "user",
+          "content": "We run a 40-person financial services firm and want an AI agent that can answer questions from our internal documentation and qualify inbound leads. Can it integrate with our CRM?"
+        }
+      ],
+      "context": {
+        "company": "Example Financial Services Ltd",
+        "region": "UK",
+        "source": "website"
+      },
+      "tools": {
+        "crmLookup": true,
+        "knowledgeBase": true,
+        "calendarBooking": false
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "body": {
+      "message": {
+        "role": "assistant",
+        "content": "Yes. The platform can support internal knowledge retrieval and lead qualification workflows, and can be integrated with CRM systems via API. For a firm of your size, a typical deployment would separate internal knowledge assistance from external lead handling, with shared routing and audit controls."
+      },
+      "routing": {
+        "selectedAgent": "sales-agent-uk",
+        "reason": "Inbound commercial enquiry requiring product explanation and qualification"
+      },
+      "toolResults": [
+        {
+          "tool": "knowledgeBase",
+          "status": "used",
+          "summary": "Retrieved relevant deployment and CRM integration patterns"
+        }
+      ],
+      "nextActions": [
+        "Clarify CRM platform",
+        "Confirm data sources",
+        "Assess compliance requirements"
+      ],
+      "usage": {
+        "inputMessages": 2,
+        "stateless": true
+      }
+    }
+  }
+}
