@@ -23,7 +23,7 @@ class WorkflowTests(unittest.TestCase):
 
     def approve(self):
         self.submit()
-        self.engine.decide("demo-acme-approver","r1","approve")
+        self.engine.decide("demo-acme-approver","r1","approve", action_digest=self.engine.get("demo-acme","r1")["authority"]["actionDigest"])
 
     def error(self, status, fn):
         with self.assertRaises(WorkflowError) as caught:
@@ -47,7 +47,7 @@ class WorkflowTests(unittest.TestCase):
     def test_cross_tenant_read_and_approval_denied(self):
         self.submit()
         self.error(404,lambda:self.engine.get("demo-beta","r1"))
-        self.error(404,lambda:self.engine.decide("demo-beta-approver","r1","approve"))
+        self.error(404,lambda:self.engine.decide("demo-beta-approver","r1","approve", action_digest=self.engine.get("demo-acme","r1")["authority"]["actionDigest"]))
 
     def test_requester_cannot_self_approve(self):
         self.submit()
@@ -132,7 +132,7 @@ class HttpTests(unittest.TestCase):
                     call("/http/execute","demo-acme",{})
                 self.assertEqual(403,caught.exception.code)
                 caught.exception.close()
-                call("/http/decision","demo-acme-approver",{"decision":"approve"})
+                call("/http/decision","demo-acme-approver",{"decision":"approve", "actionDigest":call("/http","demo-acme")["authority"]["actionDigest"]})
                 self.assertEqual("completed",call("/http/execute","demo-acme",{})["state"])
                 self.assertEqual("completed",call("/http","demo-acme")["state"])
             finally:

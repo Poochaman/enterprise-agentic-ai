@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Governed Workflow Mock API",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Loopback-only reference. Public demo tokens do not authenticate real users. Maximum request body: 12000 bytes. No live model or CRM."
   },
   "servers": [
@@ -212,7 +212,7 @@
     },
     "/v1/workflows/{requestId}/decision": {
       "post": {
-        "summary": "Approve or reject using a separate approver role",
+        "summary": "Approve exact action digest with expiry and count limit, or reject",
         "responses": {
           "200": {
             "description": "Current durable workflow state",
@@ -530,6 +530,220 @@
           }
         ]
       }
+    },
+    "/v1/workflows/{requestId}/revoke": {
+      "post": {
+        "summary": "Revoke task approval as same-tenant approver; does not undo effects",
+        "responses": {
+          "200": {
+            "description": "Current durable workflow state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workflow"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unknown demo identity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role or action not authorised",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown route or tenant-scoped workflow",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "State or request ID conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "JSON content type required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Empty"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/workflows/{requestId}/revise": {
+      "post": {
+        "summary": "Revise an unstarted sales proposal, invalidating prior approval",
+        "responses": {
+          "200": {
+            "description": "Current durable workflow state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Workflow"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unknown demo identity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Role or action not authorised",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown route or tenant-scoped workflow",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "State or request ID conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "JSON content type required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal failure",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Revision"
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
     }
   },
   "components": {
@@ -559,25 +773,61 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 2000,
-            "description": "Non-blank after trimming. Untrusted enquiry text, never authority."
+            "description": "Untrusted enquiry text, never authority; must contain non-whitespace characters."
+          },
+          "leadCount": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "default": 1,
+            "description": "Synthetic CRM record count; sales only. Execution separately checks the approved limit."
           }
         }
       },
       "Decision": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "decision"
-        ],
-        "properties": {
-          "decision": {
-            "type": "string",
-            "enum": [
-              "approve",
-              "reject"
-            ]
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "decision",
+              "actionDigest"
+            ],
+            "properties": {
+              "decision": {
+                "const": "approve"
+              },
+              "actionDigest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "ttlSeconds": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 900,
+                "default": 300
+              },
+              "maxActions": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3,
+                "default": 1
+              }
+            }
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "decision"
+            ],
+            "properties": {
+              "decision": {
+                "const": "reject"
+              }
+            }
           }
-        }
+        ]
       },
       "Empty": {
         "type": "object",
@@ -605,7 +855,9 @@
           "result",
           "attempts",
           "approvedBy",
-          "trace"
+          "trace",
+          "revision",
+          "authority"
         ],
         "properties": {
           "requestId": {
@@ -632,7 +884,10 @@
               "completed",
               "rejected",
               "cancelled",
-              "needs_review"
+              "needs_review",
+              "expired",
+              "revoked",
+              "budget_exceeded"
             ]
           },
           "action": {
@@ -674,6 +929,90 @@
                 }
               }
             }
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "authority": {
+            "type": "object",
+            "required": [
+              "actionDigest",
+              "approvedDigest",
+              "expiresAt",
+              "maxActions",
+              "revoked",
+              "status"
+            ],
+            "properties": {
+              "actionDigest": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "approvedDigest": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "expiresAt": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Unix epoch seconds; expired when server time is greater than or equal to this value."
+              },
+              "maxActions": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 1,
+                "maximum": 3
+              },
+              "revoked": {
+                "type": "boolean"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "not_granted",
+                  "valid",
+                  "expired",
+                  "revoked"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "Revision": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "message",
+          "revision"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "Untrusted enquiry text, never authority; must contain non-whitespace characters."
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "leadCount": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5,
+            "default": 1,
+            "description": "Synthetic CRM record count; sales only. Execution separately checks the approved limit."
           }
         }
       }

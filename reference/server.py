@@ -20,7 +20,8 @@ def handler(data):
         def dispatch(self, method):
             engine = Engine(data)
             try:
-                token = self.headers.get("Authorization", "").removeprefix("Bearer ")
+                authorization = self.headers.get("Authorization", "")
+                token = authorization[7:] if authorization.startswith("Bearer ") else ""
                 path = urlsplit(self.path).path.strip("/").split("/")
                 payload = None
                 if method == "POST":
@@ -37,10 +38,18 @@ def handler(data):
                 elif len(path) == 4 and path[:2] == ["v1", "workflows"] and method == "POST":
                     rid, operation = path[2:]
                     if operation == "decision":
-                        if not isinstance(payload,dict) or set(payload) != {"decision"}:
-                            raise WorkflowError(400,"expected_decision_only")
-                        result = engine.decide(token,rid,payload["decision"])
-                    elif operation in ("execute", "cancel"):
+                        if (not isinstance(payload, dict) or "decision" not in payload
+                                or set(payload) - {"decision", "actionDigest", "ttlSeconds", "maxActions"}):
+                            raise WorkflowError(400, "invalid_decision_payload")
+                        if payload["decision"] == "reject" and set(payload) != {"decision"}:
+                            raise WorkflowError(400, "reject_accepts_decision_only")
+                        result = engine.decide(token, rid, payload["decision"],
+                                               action_digest=payload.get("actionDigest"),
+                                               ttl_seconds=payload.get("ttlSeconds", 300),
+                                               max_actions=payload.get("maxActions", 1))
+                    elif operation == "revise":
+                        result = engine.revise(token, rid, payload)
+                    elif operation in ("execute", "cancel", "revoke"):
                         if payload != {}:
                             raise WorkflowError(400,"expected_empty_object")
                         result = getattr(engine,operation)(token,rid)
@@ -74,7 +83,7 @@ def main():
     parser.add_argument("--port",type=int,default=8765)
     args = parser.parse_args()
     with HTTPServer(("127.0.0.1",args.port),handler(args.data)) as server:
-        print(f"Mock API: http://127.0.0.1:{args.port}",flush=True)
+        print(f"Mock API: http://127.0.0.1:{server.server_port}",flush=True)
         server.serve_forever()
 
 if __name__ == "__main__":

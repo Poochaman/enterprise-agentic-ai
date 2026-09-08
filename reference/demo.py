@@ -11,7 +11,7 @@ def main():
     try:
         result = engine.submit("demo-acme", {"requestId":"demo-sales", "message":"Please quote a CRM integration"})
         if result["state"] == "awaiting_approval":
-            engine.decide("demo-acme-approver", "demo-sales", "approve")
+            engine.decide("demo-acme-approver", "demo-sales", "approve", action_digest=result["authority"]["actionDigest"])
         if result["state"] != "completed":
             try:
                 engine.execute("demo-acme", "demo-sales", fault="after_write")
