@@ -14,7 +14,9 @@ python -m reference.smoke
 
 The smoke check starts a temporary local API, runs seven groups of HTTP checks and shuts it down. You should see `PASS` for approved execution, expiry, revocation, revised approvals, action limits, tenant isolation and the resulting CRM records. It uses a real one-second expiry and fresh temporary data each time, so you can run it repeatedly.
 
-For the full tests, scenario report and a persistent recovery demo, run from the repository root:
+**Run all commands from the cloned project folder** (the folder containing `reference/`). Return there after opening a new terminal; otherwise Python reports `No module named reference`.
+
+For the full tests, scenario report and recovery demo:
 
 ```sh
 python -m unittest discover -s tests -v
@@ -22,7 +24,27 @@ python -m reference.evaluate
 python -m reference.demo --data .reference-data/demo
 ```
 
-The recovery demo commits one mock CRM record, deliberately loses its response, closes the engine, reopens the databases and reconciles the completed action. Re-running it does not duplicate that record. The data directory remains available for inspection.
+### Reading the recovery result
+
+**The action succeeded, but its confirmation was lost. The system checked what had already happened instead of blindly repeating the action.**
+
+| Output | Meaning |
+|---|---|
+| `CRM committed; simulated response loss…` | The mock CRM write succeeded; its confirmation was deliberately lost. |
+| Matching `actionDigest` and `approvedDigest` | The action matches the approved proposal. |
+| `reconciled` | Recovery found the existing CRM record. |
+| `"state": "completed"` | The workflow finished successfully. |
+| Same `leadId` and `"attempts": 1` on replay | The saved result was returned without another execution attempt. |
+
+Reusing a data directory returns its saved result. To watch a fresh recovery and then replay it, run in PowerShell from the project folder:
+
+```powershell
+$demoData = '.reference-data/demo-' + [guid]::NewGuid().ToString('N')
+python -m reference.demo --data $demoData
+python -m reference.demo --data $demoData
+```
+
+The first run shows the response-loss message; the second returns the completed result. Existing data is preserved. Older saved tasks may have empty approval fields; a fresh directory shows the current format.
 
 ## What this demonstrates
 
