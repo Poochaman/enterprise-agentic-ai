@@ -1,0 +1,141 @@
+{
+  "scope": "deterministic mock control-flow evaluation; not an LLM benchmark",
+  "python": "3.12.0",
+  "total": 10,
+  "passed": 10,
+  "model_calls": 0,
+  "provider_cost_usd": 0,
+  "cost_note": "Mock execution only; excludes infrastructure and engineering costs.",
+  "cases": [
+    {
+      "id": "sales-price",
+      "passed": true,
+      "checks": {
+        "routing": true,
+        "state": true,
+        "authority_enforced": true,
+        "external_effects": true,
+        "trace_present": true
+      },
+      "latency_ms": 6.372,
+      "crm_records": 0
+    },
+    {
+      "id": "sales-crm",
+      "passed": true,
+      "checks": {
+        "routing": true,
+        "state": true,
+        "authority_enforced": true,
+        "external_effects": true,
+        "trace_present": true
+      },
+      "latency_ms": 7.827,
+      "crm_records": 0
+    },
+    {
+      "id": "support-failure",
+      "passed": true,
+      "checks": {
+        "routing": true,
+        "state": true,
+        "authority_enforced": true,
+        "external_effects": true,
+        "trace_present": true
+      },
+      "latency_ms": 7.741,
+      "crm_records": 0
+    },
+    {
+      "id": "support-hours",
+      "passed": true,
+      "checks": {
+        "routing": true,
+        "state": true,
+        "authority_enforced": true,
+        "external_effects": true,
+        "trace_present": true
+      },
+      "latency_ms": 4.91,
+      "crm_records": 0
+    },
+    {
+      "id": "unknown",
+      "passed": true,
+      "checks": {
+        "routing": true,
+        "state": true,
+        "authority_enforced": true,
+        "external_effects": true,
+        "trace_present": true
+      },
+      "latency_ms": 7.347,
+      "crm_records": 0
+    },
+    {
+      "id": "mixed",
+      "passed": true,
+      "checks": {
+        "routing": true,
+        "state": true,
+        "authority_enforced": true,
+        "external_effects": true,
+        "trace_present": true
+      },
+      "latency_ms": 4.319,
+      "crm_records": 0
+    },
+    {
+      "id": "injection",
+      "passed": true,
+      "checks": {
+        "routing": true,
+        "state": true,
+        "authority_enforced": true,
+        "external_effects": true,
+        "trace_present": true
+      },
+      "latency_ms": 4.472,
+      "crm_records": 0
+    },
+    {
+      "id": "restart",
+      "passed": true,
+      "checks": {
+        "routing": true,
+        "state": true,
+        "authority_enforced": true,
+        "external_effects": true,
+        "trace_present": true
+      },
+      "latency_ms": 33.38,
+      "crm_records": 1
+    },
+    {
+      "id": "rejected",
+      "passed": true,
+      "checks": {
+        "routing": true,
+        "state": true,
+        "authority_enforced": true,
+        "external_effects": true,
+        "trace_present": true
+      },
+      "latency_ms": 13.111,
+      "crm_records": 0
+    },
+    {
+      "id": "cancelled",
+      "passed": true,
+      "checks": {
+        "routing": true,
+        "state": true,
+        "authority_enforced": true,
+        "external_effects": true,
+        "trace_present": true
+      },
+      "latency_ms": 12.041,
+      "crm_records": 0
+    }
+  ]
+}

@@ -63,3 +63,7 @@ Founder @ AI Venture X
 Deploying agentic AI systems for enterprise automation and integrations
 
 https://www.aiventurex.com/
+
+## Runnable reference workflow
+
+A [local Python reference implementation](reference/README.md) demonstrates sales/support routing, tenant-scoped context, approval-controlled CRM actions, durable recovery, and scenario evaluations using mock integrations. It runs without credentials or third-party packages. See the runbook for its explicit scope and production limitations.
