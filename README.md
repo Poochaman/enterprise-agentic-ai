@@ -1,69 +1,81 @@
-# Agentic AI Platform
+# Enterprise Agentic AI
 
-Architectures, patterns, and reference implementations for deploying agentic AI systems in enterprise environments.
+A runnable Python reference for controlling what an agent may do: approve a specific action, enforce its limits, and recover from a lost response without duplicating CRM records.
 
-## Overview
+**Public scope:** working reference code and architecture documentation. Agent behaviour and the CRM are simulated; commercial implementations remain proprietary.
 
-This repository outlines how to design and deploy agentic AI systems that:
-- Operate autonomously across workflows
-- Integrate with existing enterprise systems
-- Drive measurable business outcomes (automation, revenue, efficiency)
+[![Reference checks](https://github.com/Poochaman/enterprise-agentic-ai/actions/workflows/reference.yml/badge.svg)](https://github.com/Poochaman/enterprise-agentic-ai/actions/workflows/reference.yml)
 
-The focus is on real-world deployment, not experimentation.
+## Run the checks
 
-## Core Capabilities
+Requires Git and Python 3.12 (the tested version). No API keys or third-party Python packages are needed.
 
-- Multi-agent orchestration
-- Stateless API-driven interaction models
-- Integration with CRMs, communication platforms, and data systems
-- Workflow automation and decision routing
-- Scalable deployment patterns
+```powershell
+git clone https://github.com/Poochaman/enterprise-agentic-ai.git
+cd enterprise-agentic-ai
+python -m reference.smoke
+```
 
-## Example Use Cases
+Run Python commands from the repository root. On systems that name Python 3 `python3`, substitute that command.
 
-- AI sales agents (lead engagement, qualification, conversion)
-- Customer support automation
-- Internal knowledge assistants
-- Process automation across business functions
+Expected result: **seven HTTP smoke checks pass**. They cover approved execution, replay, approval expiry and revocation, revised proposals, batch limits, tenant isolation, and the final mock CRM records.
 
-## Architecture
+For the narrated recovery example, run these commands in the same PowerShell session:
 
-Typical system structure:
+```powershell
+$demoData = '.reference-data/demo-' + [guid]::NewGuid().ToString('N')
+python -m reference.demo --data $demoData
+python -m reference.demo --data $demoData
+```
 
-Client / UI  
-→ API Layer (authentication, routing)  
-→ Agent Layer (LLM-driven decision making)  
-→ Tooling Layer (integrations, APIs, workflows)  
-→ External Systems (CRM, databases, messaging platforms)
+The first run simulates a CRM write succeeding while its response is lost, then recovers the existing result. The second returns the completed result without creating another lead. The [runbook](reference/README.md) explains the output and provides other run options.
 
-## Design Principles
+## Interactive examples
 
-- Stateless communication for scalability
-- Modular agent design
-- Provider-agnostic LLM integration
-- Clear separation between reasoning and execution layers
-- Production-first approach
+Run `python examples/run.py` from this folder and open **http://127.0.0.1:8877**.
 
-## Implementation Notes
+| Browser example | What to explore |
+| --- | --- |
+| [Agent Control Room](examples/agent-control-room/README.md) | Proposals, approvals, action limits, revocation and response-loss recovery through the existing engine |
+| [Programme Intelligence](examples/programme-intelligence/README.md) | A supplier-delay scenario, calculated schedule impact and optional source-linked AI commentary |
+| [Model Evaluation](examples/model-evaluation/README.md) | Local routing baselines, optional live models, failed cases and downloadable results |
 
-This repository contains:
-- Reference architectures
-- Example API patterns
-- Integration strategies
-- Selected code snippets (sanitised)
+All three have runnable no-key modes. Live AI is opt-in and requires your own provider credentials. [Setup, scope and tests](examples/README.md).
 
-## Background
+## What the reference demonstrates
 
-Built based on real-world deployment experience across enterprise environments, including Financial Services, Government, and commercial systems.
+| Engineering concern | Observable behaviour |
+| --- | --- |
+| Separation of proposal and approval | A requester proposes an action; a separate approver authorises its exact digest. |
+| Bounded authority | Approvals expire, can be revoked, and limit the number of CRM records. |
+| Changed instructions | Revising a proposal invalidates its approval. |
+| Tenant boundaries | Identity determines tenant access; client overrides are rejected. |
+| Recovery after response loss | The workflow reconciles the committed mock CRM result before considering another write. |
+| Reviewable execution | Persisted state and event traces show routing, approval and execution decisions. |
+
+These checks demonstrate behaviour in the local reference. They do not measure model quality, production throughput or a real CRM integration. The mock identity and persistence model need production-specific replacements and validation.
+
+## Explore the implementation
+
+| Resource | What to inspect |
+| --- | --- |
+| [Reference runbook](reference/README.md) | Demo, HTTP service, evaluation commands and implementation limitations |
+| [Workflow implementation](reference/workflow.py) | Authority checks, persistence, tool execution and recovery |
+| [HTTP contract](reference/openapi.json) | The reference service's workflow endpoints |
+| [Scenario cases](reference/cases.json) | Deterministic inputs and expected outcomes |
+| [Automated tests](tests/) | Workflow and authority regression coverage |
+| [Architecture](architecture.md) | Enterprise layers and integration boundaries |
+| [Agent flow](agent-flow.md) | Routing and execution design |
+| [Illustrative API payload](api-example.json) | Broader architecture example; separate from the runnable HTTP contract |
+
+## Engineering context
+
+The wider design connects client interfaces, APIs, specialist agents and controlled tools to enterprise systems. Applications include sales/support workflows, internal knowledge assistants and process automation.
+
+The key design choices are explicit routing, permissions enforced outside the model, durable workflow state, and separation between reasoning and external effects. A stateless conversation API can still depend on persistent approvals, audit records and recovery state.
 
 ## About
 
-Richard Russell  
-Founder @ AI Venture X  
-Deploying agentic AI systems for enterprise automation and integrations
+Richard Russell · Founder, [AI Venture X](https://aiventurex.com/)
 
-https://www.aiventurex.com/
-
-## Runnable reference workflow
-
-A [local Python reference implementation](reference/README.md) demonstrates sales/support routing, tenant-scoped context, task-bound expiring approvals, operator revocation, action limits, durable recovery, and scenario evaluations using mock integrations. It runs without credentials or third-party packages. See the runbook for its explicit scope and production limitations.
+[Technical profile and featured work](https://github.com/Poochaman#featured-work) · [Discuss an integration](https://aiventurex.com/#contact-2) · [LinkedIn](https://www.linkedin.com/in/richie-russell/)

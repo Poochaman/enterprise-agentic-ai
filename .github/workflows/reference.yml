@@ -20,3 +20,5 @@ jobs:
       - run: python -m reference.demo --data .reference-data/demo
       - run: python -m reference.demo --data .reference-data/demo
       - run: python -m reference.smoke
+      - run: python -m unittest discover -s examples/tests -v
+      - run: python examples/smoke.py

@@ -1,0 +1,178 @@
+{
+  "name": "Northstar infrastructure readiness",
+  "startDate": "2026-10-05",
+  "tasks": [
+    {
+      "id": "design",
+      "name": "Solution design",
+      "duration": 3,
+      "dependsOn": [],
+      "workstream": "Architecture",
+      "owner": "Design lead"
+    },
+    {
+      "id": "power-design",
+      "name": "Power design",
+      "duration": 5,
+      "dependsOn": [
+        "design"
+      ],
+      "workstream": "Facilities",
+      "owner": "Electrical lead"
+    },
+    {
+      "id": "rack-spec",
+      "name": "Rack specification",
+      "duration": 3,
+      "dependsOn": [
+        "design"
+      ],
+      "workstream": "Compute",
+      "owner": "Platform lead"
+    },
+    {
+      "id": "power-equipment",
+      "name": "Power equipment delivery",
+      "duration": 15,
+      "dependsOn": [
+        "power-design"
+      ],
+      "workstream": "Facilities",
+      "owner": "Supplier manager"
+    },
+    {
+      "id": "network-hardware",
+      "name": "Network hardware delivery",
+      "duration": 10,
+      "dependsOn": [
+        "rack-spec"
+      ],
+      "workstream": "Network",
+      "owner": "Network lead"
+    },
+    {
+      "id": "site-prep",
+      "name": "Site preparation",
+      "duration": 8,
+      "dependsOn": [
+        "design"
+      ],
+      "workstream": "Facilities",
+      "owner": "Site lead"
+    },
+    {
+      "id": "cooling-equipment",
+      "name": "Cooling equipment delivery",
+      "duration": 12,
+      "dependsOn": [
+        "design"
+      ],
+      "workstream": "Facilities",
+      "owner": "Supplier manager"
+    },
+    {
+      "id": "power-install",
+      "name": "Power installation",
+      "duration": 6,
+      "dependsOn": [
+        "site-prep",
+        "power-equipment"
+      ],
+      "workstream": "Facilities",
+      "owner": "Electrical lead"
+    },
+    {
+      "id": "cooling-install",
+      "name": "Cooling installation",
+      "duration": 5,
+      "dependsOn": [
+        "site-prep",
+        "cooling-equipment"
+      ],
+      "workstream": "Facilities",
+      "owner": "Mechanical lead"
+    },
+    {
+      "id": "racks",
+      "name": "Rack installation",
+      "duration": 4,
+      "dependsOn": [
+        "site-prep",
+        "rack-spec"
+      ],
+      "workstream": "Compute",
+      "owner": "Platform lead"
+    },
+    {
+      "id": "network-install",
+      "name": "Network installation",
+      "duration": 5,
+      "dependsOn": [
+        "network-hardware",
+        "racks"
+      ],
+      "workstream": "Network",
+      "owner": "Network lead"
+    },
+    {
+      "id": "integrated-test",
+      "name": "Integrated acceptance testing",
+      "duration": 5,
+      "dependsOn": [
+        "power-install",
+        "cooling-install",
+        "network-install"
+      ],
+      "workstream": "Assurance",
+      "owner": "Test lead"
+    },
+    {
+      "id": "security-review",
+      "name": "Security review",
+      "duration": 4,
+      "dependsOn": [
+        "network-install"
+      ],
+      "workstream": "Assurance",
+      "owner": "Security lead"
+    },
+    {
+      "id": "acceptance",
+      "name": "Operational acceptance",
+      "duration": 3,
+      "dependsOn": [
+        "integrated-test",
+        "security-review"
+      ],
+      "workstream": "Assurance",
+      "owner": "Operations lead"
+    },
+    {
+      "id": "handover",
+      "name": "Ready for handover",
+      "duration": 0,
+      "dependsOn": [
+        "acceptance"
+      ],
+      "workstream": "Assurance",
+      "owner": "Programme director"
+    }
+  ],
+  "sources": [
+    {
+      "id": "PLAN-01",
+      "title": "Synthetic delivery baseline",
+      "text": "Illustrative infrastructure programme. Durations are working days, Monday to Friday; holidays and resource constraints are excluded. A finish date is the boundary at which a successor may start. Finish-to-start dependencies have no lag. These are teaching assumptions, not engineering estimates for a real facility."
+    },
+    {
+      "id": "GOV-01",
+      "title": "Change ownership",
+      "text": "Workstream owners review impacts. The programme director approves baseline changes. Analysis does not change the baseline or issue supplier instructions."
+    },
+    {
+      "id": "SUP-01",
+      "title": "Illustrative supplier issue",
+      "text": "A supplier scenario assumes power equipment takes 15 additional working days. Confirm actual delivery dates and dependencies before a real programme decision."
+    }
+  ]
+}

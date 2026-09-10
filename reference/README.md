@@ -155,3 +155,5 @@ Existing demo databases are migrated without deleting records. Completed workflo
 Real deployments still need verified identities, protected credentials, named approvers, durable audit custody, time synchronisation, distributed execution coordination, connector timeouts, backoff, partial-failure handling and resource limits across tasks. The action digest is a consistency check, not a cryptographic signature or protection against an administrator changing the database.
 
 This demo has no live LLM, vector index, semantic prompt-injection defence, UI, TLS, rate limiting, production hosting or encryption-at-rest. `needs_review` is a terminal handoff with no review UI. Its tests demonstrate specific controls on synthetic data; they do not establish production scale, model quality or the book's wider conclusions.
+
+The separate [interactive examples](../examples/README.md) add browser interfaces and optional live model evaluation. The base reference commands and mock API above remain unchanged.
