@@ -76,6 +76,7 @@ The key design choices are explicit routing, permissions enforced outside the mo
 
 ## About
 
-Richard Russell · Founder, [AI Venture X](https://aiventurex.com/)
+[Richard Russell](https://richardrussell.org/about-richard-russell) · Founder, [AI Venture X](https://aiventurex.com/)
 
-[Technical profile and featured work](https://github.com/Poochaman#featured-work) · [Discuss an integration](https://aiventurex.com/#contact-2) · [LinkedIn](https://www.linkedin.com/in/richie-russell/)
+[Controlled agentic AI guide](https://aiventurex.com/controlled-agentic-ai-workflows.html) · [Technical profile and featured work](https://github.com/Poochaman#featured-work) · [Discuss an integration](https://aiventurex.com/#contact-2) · [LinkedIn](https://www.linkedin.com/in/richie-russell/)
+
