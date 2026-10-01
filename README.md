@@ -74,6 +74,12 @@ The wider design connects client interfaces, APIs, specialist agents and control
 
 The key design choices are explicit routing, permissions enforced outside the model, durable workflow state, and separation between reasoning and external effects. A stateless conversation API can still depend on persistent approvals, audit records and recovery state.
 
+## Licence
+
+The code and documentation published in this repository are licensed under the [MIT License](LICENSE), permitting commercial use, modification and redistribution subject to its terms.
+
+Separate commercial implementations, deployments and services from AI Venture X are not included in this repository and remain proprietary. This distinction does not restrict the rights granted by the MIT licence for the published reference.
+
 ## About
 
 [Richard Russell](https://richardrussell.org/about-richard-russell) · Founder, [AI Venture X](https://aiventurex.com/)
